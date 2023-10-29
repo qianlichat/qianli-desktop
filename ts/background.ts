@@ -1431,8 +1431,8 @@ export async function startApp(): Promise<void> {
       );
 
       // Cancel throttled calls to refreshRemoteConfig since our auth changed.
-      window.Signal.RemoteConfig.maybeRefreshRemoteConfig.cancel();
-      drop(window.Signal.RemoteConfig.maybeRefreshRemoteConfig(server));
+      // window.Signal.RemoteConfig.maybeRefreshRemoteConfig.cancel();
+      // drop(window.Signal.RemoteConfig.maybeRefreshRemoteConfig(server));
 
       drop(connect(true));
     });
@@ -1479,17 +1479,17 @@ export async function startApp(): Promise<void> {
     activeWindowService.registerForActive(async () => {
       strictAssert(server !== undefined, 'WebAPI not ready');
 
-      try {
-        await window.Signal.RemoteConfig.maybeRefreshRemoteConfig(server);
-      } catch (error) {
-        if (error instanceof HTTPError) {
-          log.warn(
-            `registerForActive: Failed to to refresh remote config. Code: ${error.code}`
-          );
-          return;
-        }
-        throw error;
-      }
+      // try {
+      //   await window.Signal.RemoteConfig.maybeRefreshRemoteConfig(server);
+      // } catch (error) {
+      //   if (error instanceof HTTPError) {
+      //     log.warn(
+      //       `registerForActive: Failed to to refresh remote config. Code: ${error.code}`
+      //     );
+      //     return;
+      //   }
+      //   throw error;
+      // }
     });
 
     // Listen for changes to the `desktop.clientExpiration` remote flag
@@ -1673,35 +1673,35 @@ export async function startApp(): Promise<void> {
         await me.setProfileKey(Bytes.toBase64(profileKey));
       }
 
-      if (connectCount === 0) {
-        try {
-          // Force a re-fetch before we process our queue. We may want to turn on
-          //   something which changes how we process incoming messages!
-          await window.Signal.RemoteConfig.refreshRemoteConfig(server);
+      // if (connectCount === 0) {
+      //   try {
+      //     // Force a re-fetch before we process our queue. We may want to turn on
+      //     //   something which changes how we process incoming messages!
+      //     await window.Signal.RemoteConfig.refreshRemoteConfig(server);
 
-          const expiration = window.Signal.RemoteConfig.getValue(
-            'desktop.clientExpiration'
-          );
-          if (expiration) {
-            const remoteBuildExpirationTimestamp = parseRemoteClientExpiration(
-              expiration as string
-            );
-            if (remoteBuildExpirationTimestamp) {
-              await window.storage.put(
-                'remoteBuildExpiration',
-                remoteBuildExpirationTimestamp
-              );
-            }
-          }
-        } catch (error) {
-          log.error(
-            'connect: Error refreshing remote config:',
-            isNumber(error.code)
-              ? `code: ${error.code}`
-              : Errors.toLogFormat(error)
-          );
-        }
-      }
+      //     const expiration = window.Signal.RemoteConfig.getValue(
+      //       'desktop.clientExpiration'
+      //     );
+      //     if (expiration) {
+      //       const remoteBuildExpirationTimestamp = parseRemoteClientExpiration(
+      //         expiration as string
+      //       );
+      //       if (remoteBuildExpirationTimestamp) {
+      //         await window.storage.put(
+      //           'remoteBuildExpiration',
+      //           remoteBuildExpirationTimestamp
+      //         );
+      //       }
+      //     }
+      //   } catch (error) {
+      //     log.error(
+      //       'connect: Error refreshing remote config:',
+      //       isNumber(error.code)
+      //         ? `code: ${error.code}`
+      //         : Errors.toLogFormat(error)
+      //     );
+      //   }
+      // }
 
       connectCount += 1;
 

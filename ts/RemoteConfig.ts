@@ -73,7 +73,7 @@ const listeners: ConfigListenersMapType = {};
 
 export async function initRemoteConfig(server: WebAPIType): Promise<void> {
   config = window.storage.get('remoteConfig') || {};
-  await maybeRefreshRemoteConfig(server);
+  // await maybeRefreshRemoteConfig(server);
 }
 
 export function onChange(
@@ -92,57 +92,57 @@ export function onChange(
 export const refreshRemoteConfig = async (
   server: WebAPIType
 ): Promise<void> => {
-  const now = Date.now();
-  const { config: newConfig, serverEpochTime } = await server.getConfig();
-  const serverTimeSkew = serverEpochTime * SECOND - now;
+  // const now = Date.now();
+  // const { config: newConfig, serverEpochTime } = await server.getConfig();
+  // const serverTimeSkew = serverEpochTime * SECOND - now;
 
-  if (Math.abs(serverTimeSkew) > HOUR) {
-    log.warn(
-      'Remote Config: sever clock skew detected. ' +
-        `Server time ${serverEpochTime * SECOND}, local time ${now}`
-    );
-  }
+  // if (Math.abs(serverTimeSkew) > HOUR) {
+  //   log.warn(
+  //     'Remote Config: sever clock skew detected. ' +
+  //       `Server time ${serverEpochTime * SECOND}, local time ${now}`
+  //   );
+  // }
 
-  // Process new configuration in light of the old configuration
-  // The old configuration is not set as the initial value in reduce because
-  // flags may have been deleted
-  const oldConfig = config;
-  config = newConfig.reduce((acc, { name, enabled, value }) => {
-    const previouslyEnabled: boolean = get(oldConfig, [name, 'enabled'], false);
-    const previousValue: unknown = get(oldConfig, [name, 'value'], undefined);
-    // If a flag was previously not enabled and is now enabled,
-    // record the time it was enabled
-    const enabledAt: number | undefined =
-      previouslyEnabled && enabled ? now : get(oldConfig, [name, 'enabledAt']);
+  // // Process new configuration in light of the old configuration
+  // // The old configuration is not set as the initial value in reduce because
+  // // flags may have been deleted
+  // const oldConfig = config;
+  // config = newConfig.reduce((acc, { name, enabled, value }) => {
+  //   const previouslyEnabled: boolean = get(oldConfig, [name, 'enabled'], false);
+  //   const previousValue: unknown = get(oldConfig, [name, 'value'], undefined);
+  //   // If a flag was previously not enabled and is now enabled,
+  //   // record the time it was enabled
+  //   const enabledAt: number | undefined =
+  //     previouslyEnabled && enabled ? now : get(oldConfig, [name, 'enabledAt']);
 
-    const configValue = {
-      name: name as ConfigKeyType,
-      enabled,
-      enabledAt,
-      value,
-    };
+  //   const configValue = {
+  //     name: name as ConfigKeyType,
+  //     enabled,
+  //     enabledAt,
+  //     value,
+  //   };
 
-    const hasChanged =
-      previouslyEnabled !== enabled || previousValue !== configValue.value;
+  //   const hasChanged =
+  //     previouslyEnabled !== enabled || previousValue !== configValue.value;
 
-    // If enablement changes at all, notify listeners
-    const currentListeners = listeners[name] || [];
-    if (hasChanged) {
-      log.info(`Remote Config: Flag ${name} has changed`);
-      currentListeners.forEach(listener => {
-        listener(configValue);
-      });
-    }
+  //   // If enablement changes at all, notify listeners
+  //   const currentListeners = listeners[name] || [];
+  //   if (hasChanged) {
+  //     log.info(`Remote Config: Flag ${name} has changed`);
+  //     currentListeners.forEach(listener => {
+  //       listener(configValue);
+  //     });
+  //   }
 
-    // Return new configuration object
-    return {
-      ...acc,
-      [name]: configValue,
-    };
-  }, {});
+  //   // Return new configuration object
+  //   return {
+  //     ...acc,
+  //     [name]: configValue,
+  //   };
+  // }, {});
 
-  await window.storage.put('remoteConfig', config);
-  await window.storage.put('serverTimeSkew', serverTimeSkew);
+  // await window.storage.put('remoteConfig', config);
+  // await window.storage.put('serverTimeSkew', serverTimeSkew);
 };
 
 export const maybeRefreshRemoteConfig = throttle(

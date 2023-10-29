@@ -546,10 +546,12 @@ export class SocketManager extends EventListener {
 
     const url = `${this.options.url}${path}?${qs.encode(queryWithDefaults)}`;
 
+    log.info("connecting to : " + url)
+
     return connectWebSocket({
       name,
       url,
-      certificateAuthority: this.options.certificateAuthority,
+      // certificateAuthority: this.options.certificateAuthority,
       version: this.options.version,
       proxyAgent: this.proxyAgent,
 

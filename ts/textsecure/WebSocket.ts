@@ -107,6 +107,8 @@ export function connect<Resource extends IResource>({
   client.on('connectFailed', originalErr => {
     Timers.clearTimeout(timer);
 
+    log.error("connectFailed for " + fixedScheme, originalErr)
+
     const err = new HTTPError('connectResource: connectFailed', {
       code: -1,
       headers: {},
