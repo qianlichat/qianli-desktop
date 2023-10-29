@@ -10,24 +10,9 @@ import { strictAssert } from './assert';
 import { drop } from './drop';
 
 const HOST_ALLOWLIST = new Set([
-  // Production
-  'chat.signal.org',
-  'storage.signal.org',
-  'cdsi.signal.org',
-  'cdn.signal.org',
-  'cdn2.signal.org',
-  'create.signal.art',
-
-  // Staging
-  'chat.staging.signal.org',
-  'storage-staging.signal.org',
-  'cdsi.staging.signal.org',
-  'cdn-staging.signal.org',
-  'cdn2-staging.signal.org',
-  'create.staging.signal.art',
-
-  // Common
-  'updates2.signal.org',
+  'msg.qianli.chat',
+  'cdn.qianli.chat',
+  'cdn2.qianli.chat',
   'sfu.voip.signal.org',
 ]);
 
