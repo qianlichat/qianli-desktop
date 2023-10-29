@@ -333,7 +333,7 @@
     "read-last-lines/mz/thenify-all/thenify": "3.3.1"
   },
   "engines": {
-    "node": "18.15.0"
+    "node": "18.17.1"
   },
   "build": {
     "appId": "org.whispersystems.signal-desktop",
