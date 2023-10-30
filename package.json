@@ -1,14 +1,14 @@
 {
-  "name": "signal-desktop",
-  "productName": "Signal",
+  "name": "qianli-desktop",
+  "productName": "千里传音",
   "description": "Private messaging from your desktop",
-  "desktopName": "signal.desktop",
-  "repository": "https://github.com/signalapp/Signal-Desktop.git",
+  "desktopName": "千里传音",
+  "repository": "https://github.com/qianlichat/qianli-desktop.git",
   "version": "6.37.0-alpha.1",
   "license": "AGPL-3.0-only",
   "author": {
-    "name": "Signal Messenger, LLC",
-    "email": "support@signal.org"
+    "name": "Qianli Chat",
+    "email": "qianli.chat@gmail.org"
   },
   "browserslist": "last 1 chrome versions",
   "browser": {
@@ -336,7 +336,7 @@
     "node": "18.17.1"
   },
   "build": {
-    "appId": "org.whispersystems.signal-desktop",
+    "appId": "chat.qianli.desktop",
     "mac": {
       "artifactName": "${name}-mac-${arch}-${version}.${ext}",
       "category": "public.app-category.social-networking",
@@ -345,12 +345,6 @@
       "entitlements": "./build/entitlements.mac.plist",
       "entitlementsInherit": "./build/entitlements.mac.inherit.plist",
       "icon": "build/icons/mac/icon.icns",
-      "publish": [
-        {
-          "provider": "generic",
-          "url": "https://updates.signal.org/desktop"
-        }
-      ],
       "mergeASARs": true,
       "releaseInfo": {
         "vendor": {
@@ -359,13 +353,6 @@
       },
       "singleArchFiles": "node_modules/@signalapp/{libsignal-client/prebuilds/**,ringrtc/build/**}",
       "target": [
-        {
-          "target": "zip",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        },
         {
           "target": "dmg",
           "arch": [
@@ -386,12 +373,6 @@
       ],
       "publisherName": "Signal Messenger, LLC",
       "icon": "build/icons/win/icon.ico",
-      "publish": [
-        {
-          "provider": "generic",
-          "url": "https://updates.signal.org/desktop"
-        }
-      ],
       "releaseInfo": {
         "vendor": {
           "minOSVersion": "10.0.10240"
