@@ -273,7 +273,7 @@
     "danger": "11.1.2",
     "debug": "4.3.3",
     "electron": "25.8.4",
-    "electron-builder": "24.6.3",
+    "electron-builder": "^24.6.4",
     "electron-mocha": "11.0.2",
     "electron-notarize": "1.2.1",
     "endanger": "7.0.4",
@@ -364,12 +364,12 @@
     },
     "win": {
       "artifactName": "${name}-win-${version}.${ext}",
-      "certificateSubjectName": "Signal Messenger, LLC",
+      "certificateSubjectName": "千里传音",
       "certificateSha1": "8D5E3CD800736C5E1FE459A1F5AA48287D4F6EC6",
       "signingHashAlgorithms": [
         "sha256"
       ],
-      "publisherName": "Signal Messenger, LLC",
+      "publisherName": "千里传音",
       "icon": "build/icons/win/icon.ico",
       "releaseInfo": {
         "vendor": {

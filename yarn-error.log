@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/local/bin/node /usr/local/bin/yarn install
+  /usr/local/bin/node /usr/local/bin/yarn add electron-builder --dev
 
 PATH: 
   /opt/homebrew/bin:/Users/leyzer/Library/Android/sdk/platform-tools:/Users/leyzer/Work/apache-maven-3.9.5/bin:/Users/leyzer/Work/flutter/bin/cache/dart-sdk/bin/:/opt/homebrew/bin:/Users/leyzer/Library/Android/sdk/platform-tools:/Users/leyzer/Work/apache-maven-3.9.5/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/leyzer/go/bin:/Users/leyzer/Work/flutter/bin:/Users/leyzer/Library/Android/sdk/platforms:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/usr/local/go/bin:/Users/leyzer/Work/flutter/bin/cache/dart-sdk/bin/:/opt/homebrew/opt/openssl@1.1/bin:/Users/leyzer/Work/apache-maven-3.9.5/bin:/opt/homebrew/bin:/Users/leyzer/Library/Android/sdk/platform-tools
@@ -14,7 +14,7 @@ Platform:
   darwin arm64
 
 Trace: 
-  Error: EACCES: permission denied, unlink '/Users/leyzer/Work/qianli-desktop/node_modules/.bin/ansi-html'
+  Error: EACCES: permission denied, unlink '/Users/leyzer/Work/qianli-desktop/node_modules/.bin/acorn'
 
 npm manifest: 
   {
@@ -375,8 +375,6 @@ npm manifest:
           {
             "target": "dmg",
             "arch": [
-              "x64",
-              "arm64",
               "universal"
             ]
           }
@@ -385,12 +383,12 @@ npm manifest:
       },
       "win": {
         "artifactName": "${name}-win-${version}.${ext}",
-        "certificateSubjectName": "Signal Messenger, LLC",
+        "certificateSubjectName": "千里传音",
         "certificateSha1": "8D5E3CD800736C5E1FE459A1F5AA48287D4F6EC6",
         "signingHashAlgorithms": [
           "sha256"
         ],
-        "publisherName": "Signal Messenger, LLC",
+        "publisherName": "千里传音",
         "icon": "build/icons/win/icon.ico",
         "releaseInfo": {
           "vendor": {
