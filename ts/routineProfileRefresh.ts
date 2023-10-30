@@ -171,16 +171,16 @@ function timeUntilNextRefresh(storage: Pick<StorageInterface, 'get'>): number {
     return 0;
   }
 
-  if (isNormalNumber(storedValue)) {
+  // if (isNormalNumber(storedValue)) {
     const planned = storedValue + MIN_ELAPSED_DURATION_TO_REFRESH_AGAIN;
     const now = Date.now();
     return Math.min(Math.max(0, planned - now), WEEK);
-  }
+  // }
 
-  assertDev(
-    false,
-    `An invalid value was stored in ${STORAGE_KEY}; treating it as nil`
-  );
+  // assertDev(
+  //   false,
+  //   `An invalid value was stored in ${STORAGE_KEY}; treating it as nil`
+  // );
   return 0;
 }
 
