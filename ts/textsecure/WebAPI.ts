@@ -277,7 +277,7 @@ async function _promiseAjax(
     } as FetchHeaderListType,
     redirect: options.redirect,
     agent,
-    ca: options.certificateAuthority,
+    // ca: options.certificateAuthority,
     timeout,
     abortSignal: options.abortSignal,
   };
@@ -488,6 +488,8 @@ function makeHTTPError(
 }
 
 const URL_CALLS = {
+  getAci:'v1/accounts/aci',
+  getAccountId:'v1/accounts/account_id',
   accountExistence: 'v1/accounts/account',
   attachmentId: 'v3/attachments/form/upload',
   attestation: 'v1/attestation',
@@ -697,6 +699,16 @@ const remoteConfigResponseZod = z.object({
   serverEpochTime: z.number(),
 });
 export type RemoteConfigResponseType = z.infer<typeof remoteConfigResponseZod>;
+
+const getAciByAccountIdResponseZod = z.object({
+  uuid: aciSchema,
+});
+export type GetAciByAccountIdResponseType = z.infer<typeof getAciByAccountIdResponseZod>;
+
+const getAccountIdByAciResponseZod = z.object({
+  accountId: z.string(),
+});
+export type GetAccountIdByAciResponseType = z.infer<typeof getAccountIdByAciResponseZod>;
 
 export type ProfileType = Readonly<{
   identityKey?: string;
@@ -945,6 +957,8 @@ export type RequestVerificationResultType = Readonly<{
 }>;
 
 export type WebAPIType = {
+  getAccountIdByAci(aci: string) : Promise<string>;
+  getAciByAccountId(e164: string) : Promise<AciString>;
   startRegistration(): unknown;
   finishRegistration(baton: unknown): void;
   cancelInflightRequests: (reason: string) => void;
@@ -1234,9 +1248,9 @@ export function initialize({
   if (!isString(url)) {
     throw new Error('WebAPI.initialize: Invalid server url');
   }
-  if (!isString(storageUrl)) {
-    throw new Error('WebAPI.initialize: Invalid storageUrl');
-  }
+  // if (!isString(storageUrl)) {
+  //   throw new Error('WebAPI.initialize: Invalid storageUrl');
+  // }
   if (!isString(updatesUrl)) {
     throw new Error('WebAPI.initialize: Invalid updatesUrl');
   }
@@ -1270,6 +1284,8 @@ export function initialize({
   if (!isString(version)) {
     throw new Error('WebAPI.initialize: Invalid version');
   }
+
+  storageUrl = url;
 
   // Thanks to function-hoisting, we can put this return statement before all of the
   //   below function definitions.
@@ -1368,6 +1384,8 @@ export function initialize({
 
     // Thanks, function hoisting!
     return {
+      getAccountIdByAci,
+      getAciByAccountId,
       authenticate,
       cancelInflightRequests,
       cdsLookup,
@@ -1619,6 +1637,30 @@ export function initialize({
 
     function onHasStoriesDisabledChange(newValue: boolean): void {
       void socketManager.onHasStoriesDisabledChange(newValue);
+    }
+
+    async function getAciByAccountId(e164: string) {
+      const rawRes = await _ajax({
+        call: 'getAci',
+        urlParameters: `/${e164}`,
+        httpType: 'GET',
+        responseType: 'json',
+      });
+      const res = getAciByAccountIdResponseZod.parse(rawRes);
+
+      return res.uuid;
+    }
+
+    async function getAccountIdByAci(aci: string): Promise<string> {
+      const rawRes = await _ajax({
+        call: 'getAccountId',
+        urlParameters: `/${aci}`,
+        httpType: 'GET',
+        responseType: 'json',
+      });
+      const res = getAccountIdByAciResponseZod.parse(rawRes);
+
+      return res.accountId;
     }
 
     async function getConfig() {

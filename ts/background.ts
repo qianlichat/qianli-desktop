@@ -2678,8 +2678,11 @@ export async function startApp(): Promise<void> {
       };
     }
 
-    const conversation = window.ConversationController.get(
-      destinationServiceId || destination
+    var identifierToGetOrCreate1 : ServiceIdString | null = destinationServiceId || null
+    var identifierToGetOrCreate2 : string | null = destination || null
+    const conversation = window.ConversationController.getOrCreate(
+      identifierToGetOrCreate1 || identifierToGetOrCreate2,
+      Message.PRIVATE,
     );
     strictAssert(conversation, 'Destination conversation cannot be created');
 

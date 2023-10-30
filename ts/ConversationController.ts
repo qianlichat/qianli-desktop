@@ -334,6 +334,27 @@ export class ConversationController {
         if (isGroupV1(conversation.attributes)) {
           maybeDeriveGroupV2Id(conversation);
         }
+
+        if (type !== 'group') {
+          if (isServiceIdString(identifier)){
+            log.info("have serviceId:" + identifier +", need e164")
+            var e164 = await window.textsecure.server?.getAccountIdByAci(identifier)
+            log.info("get 164 = " + e164)
+            conversation.set({
+              e164:e164
+            })
+            log.info("after set 164 :",conversation)
+          }else{
+            log.info("have e164:" + identifier +", need serviceId")
+            var aci = await window.textsecure.server?.getAciByAccountId(identifier)
+            log.info("get aci = " + aci)
+            conversation.set({
+              serviceId:aci
+            })
+            log.info("after set aci :",conversation)
+          }
+        }
+
         await saveConversation(conversation.attributes);
       } catch (error) {
         log.error(
