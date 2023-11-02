@@ -5,9 +5,5 @@ import { isEnabled } from '../RemoteConfig';
 import { isBeta } from './version';
 
 export function canEditMessages(): boolean {
-  return (
-    isBeta(window.getVersion()) ||
-    isEnabled('desktop.internalUser') ||
-    isEnabled('desktop.editMessageSend')
-  );
+  return true;
 }
