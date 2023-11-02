@@ -34,7 +34,7 @@
 }
 
 .module-splash-screen__logo {
-  @include color-svg('../images/signal-logo.svg', $color-white);
+  @include color-svg('../images/qianli-logo.png', $color-white);
   margin-block: 24px;
   margin-inline: 0;
 
