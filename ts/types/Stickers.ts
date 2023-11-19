@@ -622,85 +622,85 @@ async function doDownloadStickerPack(
   let coverIncludedInList = false;
   let nonCoverStickers: Array<Proto.StickerPack.ISticker> = [];
 
-  try {
-    // Synchronous placeholder to help with race conditions
-    const placeholder = {
-      ...STICKER_PACK_DEFAULTS,
+  // try {
+  //   // Synchronous placeholder to help with race conditions
+  //   const placeholder = {
+  //     ...STICKER_PACK_DEFAULTS,
 
-      id: packId,
-      key: packKey,
-      attemptedStatus: finalStatus,
-      downloadAttempts,
-      status: 'pending' as const,
-    };
-    stickerPackAdded(placeholder);
+  //     id: packId,
+  //     key: packKey,
+  //     attemptedStatus: finalStatus,
+  //     downloadAttempts,
+  //     status: 'pending' as const,
+  //   };
+  //   stickerPackAdded(placeholder);
 
-    const { messaging } = window.textsecure;
-    if (!messaging) {
-      throw new Error('messaging is not available!');
-    }
+  //   const { messaging } = window.textsecure;
+  //   if (!messaging) {
+  //     throw new Error('messaging is not available!');
+  //   }
 
-    const ciphertext = await messaging.getStickerPackManifest(packId);
-    const plaintext = decryptSticker(packKey, ciphertext);
-    const proto = Proto.StickerPack.decode(plaintext);
-    const firstStickerProto = proto.stickers ? proto.stickers[0] : undefined;
-    const stickerCount = proto.stickers.length;
+  //   const ciphertext = await messaging.getStickerPackManifest(packId);
+  //   const plaintext = decryptSticker(packKey, ciphertext);
+  //   const proto = Proto.StickerPack.decode(plaintext);
+  //   const firstStickerProto = proto.stickers ? proto.stickers[0] : undefined;
+  //   const stickerCount = proto.stickers.length;
 
-    coverProto = proto.cover || firstStickerProto;
-    coverStickerId = dropNull(coverProto ? coverProto.id : undefined);
+  //   coverProto = proto.cover || firstStickerProto;
+  //   coverStickerId = dropNull(coverProto ? coverProto.id : undefined);
 
-    if (!coverProto || !isNumber(coverStickerId)) {
-      throw new Error(
-        `Sticker pack ${redactPackId(
-          packId
-        )} is malformed - it has no cover, and no stickers`
-      );
-    }
+  //   if (!coverProto || !isNumber(coverStickerId)) {
+  //     throw new Error(
+  //       `Sticker pack ${redactPackId(
+  //         packId
+  //       )} is malformed - it has no cover, and no stickers`
+  //     );
+  //   }
 
-    nonCoverStickers = reject(
-      proto.stickers,
-      sticker => !isNumber(sticker.id) || sticker.id === coverStickerId
-    );
-    const coverSticker = proto.stickers.filter(
-      sticker => isNumber(sticker.id) && sticker.id === coverStickerId
-    );
-    if (coverSticker[0] && !coverProto.emoji) {
-      coverProto.emoji = coverSticker[0].emoji;
-    }
+  //   nonCoverStickers = reject(
+  //     proto.stickers,
+  //     sticker => !isNumber(sticker.id) || sticker.id === coverStickerId
+  //   );
+  //   const coverSticker = proto.stickers.filter(
+  //     sticker => isNumber(sticker.id) && sticker.id === coverStickerId
+  //   );
+  //   if (coverSticker[0] && !coverProto.emoji) {
+  //     coverProto.emoji = coverSticker[0].emoji;
+  //   }
 
-    coverIncludedInList = nonCoverStickers.length < stickerCount;
+  //   coverIncludedInList = nonCoverStickers.length < stickerCount;
 
-    // status can be:
-    //   - 'known'
-    //   - 'ephemeral' (should not hit database)
-    //   - 'pending'
-    //   - 'downloaded'
-    //   - 'error'
-    //   - 'installed'
-    const pack: StickerPackType = {
-      id: packId,
-      key: packKey,
-      attemptedStatus: finalStatus,
-      coverStickerId,
-      downloadAttempts,
-      stickerCount,
-      status: 'pending',
-      createdAt: Date.now(),
-      stickers: {},
-      storageNeedsSync: !fromStorageService,
-      ...pick(proto, ['title', 'author']),
-    };
-    await Data.createOrUpdateStickerPack(pack);
-    stickerPackAdded(pack);
+  //   // status can be:
+  //   //   - 'known'
+  //   //   - 'ephemeral' (should not hit database)
+  //   //   - 'pending'
+  //   //   - 'downloaded'
+  //   //   - 'error'
+  //   //   - 'installed'
+  //   const pack: StickerPackType = {
+  //     id: packId,
+  //     key: packKey,
+  //     attemptedStatus: finalStatus,
+  //     coverStickerId,
+  //     downloadAttempts,
+  //     stickerCount,
+  //     status: 'pending',
+  //     createdAt: Date.now(),
+  //     stickers: {},
+  //     storageNeedsSync: !fromStorageService,
+  //     ...pick(proto, ['title', 'author']),
+  //   };
+  //   await Data.createOrUpdateStickerPack(pack);
+  //   stickerPackAdded(pack);
 
-    if (messageId) {
-      await Data.addStickerPackReference(messageId, packId);
-    }
-  } catch (error) {
-    log.error(
-      `Error downloading manifest for sticker pack ${redactPackId(packId)}:`,
-      Errors.toLogFormat(error)
-    );
+  //   if (messageId) {
+  //     await Data.addStickerPackReference(messageId, packId);
+  //   }
+  // } catch (error) {
+    // log.error(
+    //   `Error downloading manifest for sticker pack ${redactPackId(packId)}:`,
+    //   Errors.toLogFormat(error)
+    // );
 
     const pack = {
       ...STICKER_PACK_DEFAULTS,
@@ -715,89 +715,89 @@ async function doDownloadStickerPack(
     stickerPackAdded(pack, { suppressError });
 
     return;
-  }
+  // }
 
   // We have a separate try/catch here because we're starting to download stickers here
   //   and we want to preserve more of the pack on an error.
-  try {
-    const downloadStickerJob = async (
-      stickerProto: Proto.StickerPack.ISticker
-    ): Promise<boolean> => {
-      try {
-        const stickerInfo = await downloadSticker(
-          packId,
-          packKey,
-          stickerProto
-        );
-        const sticker = {
-          ...stickerInfo,
-          isCoverOnly:
-            !coverIncludedInList && stickerInfo.id === coverStickerId,
-        };
-        await Data.createOrUpdateSticker(sticker);
-        stickerAdded(sticker);
-        return true;
-      } catch (error: unknown) {
-        log.error(
-          `doDownloadStickerPack/downloadStickerJob error: ${Errors.toLogFormat(
-            error
-          )}`
-        );
-        return false;
-      }
-    };
+  // try {
+  //   const downloadStickerJob = async (
+  //     stickerProto: Proto.StickerPack.ISticker
+  //   ): Promise<boolean> => {
+  //     try {
+  //       const stickerInfo = await downloadSticker(
+  //         packId,
+  //         packKey,
+  //         stickerProto
+  //       );
+  //       const sticker = {
+  //         ...stickerInfo,
+  //         isCoverOnly:
+  //           !coverIncludedInList && stickerInfo.id === coverStickerId,
+  //       };
+  //       await Data.createOrUpdateSticker(sticker);
+  //       stickerAdded(sticker);
+  //       return true;
+  //     } catch (error: unknown) {
+  //       log.error(
+  //         `doDownloadStickerPack/downloadStickerJob error: ${Errors.toLogFormat(
+  //           error
+  //         )}`
+  //       );
+  //       return false;
+  //     }
+  //   };
 
-    // Download the cover first
-    await downloadStickerJob(coverProto);
+  //   // Download the cover first
+  //   await downloadStickerJob(coverProto);
 
-    // Then the rest
-    const jobResults = await pMap(nonCoverStickers, downloadStickerJob, {
-      concurrency: 3,
-    });
+  //   // Then the rest
+  //   const jobResults = await pMap(nonCoverStickers, downloadStickerJob, {
+  //     concurrency: 3,
+  //   });
 
-    const successfulStickerCount = jobResults.filter(item => item).length;
-    if (successfulStickerCount === 0 && nonCoverStickers.length !== 0) {
-      throw new Error('doDownloadStickerPack: All stickers failed to download');
-    }
+  //   const successfulStickerCount = jobResults.filter(item => item).length;
+  //   if (successfulStickerCount === 0 && nonCoverStickers.length !== 0) {
+  //     throw new Error('doDownloadStickerPack: All stickers failed to download');
+  //   }
 
-    // Allow for the user marking this pack as installed in the middle of our download;
-    //   don't overwrite that status.
-    const existingStatus = getStickerPackStatus(packId);
-    if (existingStatus === 'installed') {
-      return;
-    }
+  //   // Allow for the user marking this pack as installed in the middle of our download;
+  //   //   don't overwrite that status.
+  //   const existingStatus = getStickerPackStatus(packId);
+  //   if (existingStatus === 'installed') {
+  //     return;
+  //   }
 
-    if (finalStatus === 'installed') {
-      await installStickerPack(packId, packKey, {
-        fromSync,
-        fromStorageService,
-      });
-    } else {
-      // Mark the pack as complete
-      await Data.updateStickerPackStatus(packId, finalStatus);
-      stickerPackUpdated(packId, {
-        status: finalStatus,
-      });
-    }
-  } catch (error) {
-    log.error(
-      `Error downloading stickers for sticker pack ${redactPackId(packId)}:`,
-      Errors.toLogFormat(error)
-    );
+  //   if (finalStatus === 'installed') {
+  //     await installStickerPack(packId, packKey, {
+  //       fromSync,
+  //       fromStorageService,
+  //     });
+  //   } else {
+  //     // Mark the pack as complete
+  //     await Data.updateStickerPackStatus(packId, finalStatus);
+  //     stickerPackUpdated(packId, {
+  //       status: finalStatus,
+  //     });
+  //   }
+  // } catch (error) {
+  //   log.error(
+  //     `Error downloading stickers for sticker pack ${redactPackId(packId)}:`,
+  //     Errors.toLogFormat(error)
+  //   );
 
-    const errorStatus = 'error';
-    await Data.updateStickerPackStatus(packId, errorStatus);
-    if (stickerPackUpdated) {
-      stickerPackUpdated(
-        packId,
-        {
-          attemptedStatus: finalStatus,
-          status: errorStatus,
-        },
-        { suppressError }
-      );
-    }
-  }
+  //   const errorStatus = 'error';
+  //   await Data.updateStickerPackStatus(packId, errorStatus);
+  //   if (stickerPackUpdated) {
+  //     stickerPackUpdated(
+  //       packId,
+  //       {
+  //         attemptedStatus: finalStatus,
+  //         status: errorStatus,
+  //       },
+  //       { suppressError }
+  //     );
+  //   }
+  // }
 }
 
 export function getStickerPack(packId: string): StickerPackType | undefined {
