@@ -1722,79 +1722,80 @@ async function processRemoteRecords(
 async function sync(
   ignoreConflicts = false
 ): Promise<Proto.ManifestRecord | undefined> {
-  if (!window.storage.get('storageKey')) {
-    throw new Error('storageService.sync: Cannot start; no storage key!');
-  }
+  return undefined;
+  // if (!window.storage.get('storageKey')) {
+  //   throw new Error('storageService.sync: Cannot start; no storage key!');
+  // }
 
-  log.info(
-    `storageService.sync: starting... ignoreConflicts=${ignoreConflicts}`
-  );
+  // log.info(
+  //   `storageService.sync: starting... ignoreConflicts=${ignoreConflicts}`
+  // );
 
-  let manifest: Proto.ManifestRecord | undefined;
-  try {
-    // If we've previously interacted with storage service, update 'fetchComplete' record
-    const previousFetchComplete = window.storage.get('storageFetchComplete');
-    const manifestFromStorage = window.storage.get('manifestVersion');
-    if (!previousFetchComplete && isNumber(manifestFromStorage)) {
-      await window.storage.put('storageFetchComplete', true);
-    }
+  // let manifest: Proto.ManifestRecord | undefined;
+  // try {
+  //   // If we've previously interacted with storage service, update 'fetchComplete' record
+  //   const previousFetchComplete = window.storage.get('storageFetchComplete');
+  //   const manifestFromStorage = window.storage.get('manifestVersion');
+  //   if (!previousFetchComplete && isNumber(manifestFromStorage)) {
+  //     await window.storage.put('storageFetchComplete', true);
+  //   }
 
-    const localManifestVersion = manifestFromStorage || 0;
+  //   const localManifestVersion = manifestFromStorage || 0;
 
-    log.info(
-      'storageService.sync: fetching latest ' +
-        `after version=${localManifestVersion}`
-    );
-    manifest = await fetchManifest(localManifestVersion);
+  //   log.info(
+  //     'storageService.sync: fetching latest ' +
+  //       `after version=${localManifestVersion}`
+  //   );
+  //   manifest = await fetchManifest(localManifestVersion);
 
-    // Guarding against no manifests being returned, everything should be ok
-    if (!manifest) {
-      log.info(
-        `storageService.sync: no updates, version=${localManifestVersion}`
-      );
-      return undefined;
-    }
+  //   // Guarding against no manifests being returned, everything should be ok
+  //   if (!manifest) {
+  //     log.info(
+  //       `storageService.sync: no updates, version=${localManifestVersion}`
+  //     );
+  //     return undefined;
+  //   }
 
-    strictAssert(manifest.version != null, 'Manifest without version');
-    const version = manifest.version?.toNumber() ?? 0;
+  //   strictAssert(manifest.version != null, 'Manifest without version');
+  //   const version = manifest.version?.toNumber() ?? 0;
 
-    log.info(
-      `storageService.sync: updating to remoteVersion=${version} ` +
-        `sourceDevice=${manifest.sourceDevice ?? '?'} from ` +
-        `version=${localManifestVersion}`
-    );
+  //   log.info(
+  //     `storageService.sync: updating to remoteVersion=${version} ` +
+  //       `sourceDevice=${manifest.sourceDevice ?? '?'} from ` +
+  //       `version=${localManifestVersion}`
+  //   );
 
-    const conflictCount = await processManifest(manifest, version);
+  //   const conflictCount = await processManifest(manifest, version);
 
-    log.info(
-      `storageService.sync: updated to version=${version} ` +
-        `conflicts=${conflictCount}`
-    );
+  //   log.info(
+  //     `storageService.sync: updated to version=${version} ` +
+  //       `conflicts=${conflictCount}`
+  //   );
 
-    await window.storage.put('manifestVersion', version);
+  //   await window.storage.put('manifestVersion', version);
 
-    const hasConflicts = conflictCount !== 0;
-    if (hasConflicts && !ignoreConflicts) {
-      await upload(true);
-    }
+  //   const hasConflicts = conflictCount !== 0;
+  //   if (hasConflicts && !ignoreConflicts) {
+  //     await upload(true);
+  //   }
 
-    // We now know that we've successfully completed a storage service fetch
-    await window.storage.put('storageFetchComplete', true);
+  //   // We now know that we've successfully completed a storage service fetch
+  //   await window.storage.put('storageFetchComplete', true);
 
-    if (window.SignalCI) {
-      window.SignalCI.handleEvent('storageServiceComplete', {
-        manifestVersion: version,
-      });
-    }
-  } catch (err) {
-    log.error(
-      'storageService.sync: error processing manifest',
-      Errors.toLogFormat(err)
-    );
-  }
+  //   if (window.SignalCI) {
+  //     window.SignalCI.handleEvent('storageServiceComplete', {
+  //       manifestVersion: version,
+  //     });
+  //   }
+  // } catch (err) {
+  //   log.error(
+  //     'storageService.sync: error processing manifest',
+  //     Errors.toLogFormat(err)
+  //   );
+  // }
 
-  log.info('storageService.sync: complete');
-  return manifest;
+  // log.info('storageService.sync: complete');
+  // return manifest;
 }
 
 async function upload(fromSync = false): Promise<void> {

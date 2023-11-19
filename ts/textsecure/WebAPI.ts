@@ -1652,15 +1652,22 @@ export function initialize({
     }
 
     async function getAccountIdByAci(aci: string): Promise<string> {
-      const rawRes = await _ajax({
-        call: 'getAccountId',
-        urlParameters: `/${aci}`,
-        httpType: 'GET',
-        responseType: 'json',
-      });
-      const res = getAccountIdByAciResponseZod.parse(rawRes);
-
-      return res.accountId;
+      try{
+        log.info("getAccountIdByAci for " + aci)
+        const rawRes = await _ajax({
+          call: 'getAccountId',
+          urlParameters: `/${aci}`,
+          httpType: 'GET',
+          responseType: 'json',
+        });
+        const res = getAccountIdByAciResponseZod.parse(rawRes);
+  
+        return res.accountId;
+      }catch(e){
+        log.error(`Error in getAccountIdByAci: ${e.message}`);
+        return "有风险用户"
+      }
+      
     }
 
     async function getConfig() {
@@ -1766,19 +1773,23 @@ export function initialize({
       data: Uint8Array,
       options: StorageServiceCallOptionsType = {}
     ): Promise<Uint8Array> {
-      const { credentials } = options;
-
-      return _ajax({
-        call: 'storageModify',
-        contentType: 'application/x-protobuf',
-        data,
-        host: storageUrl,
-        httpType: 'PUT',
-        // If we run into a conflict, the current manifest is returned -
-        //   it will will be an Uint8Array at the response key on the Error
-        responseType: 'bytes',
-        ...credentials,
+      // const { credentials } = options;
+      
+      return new Promise((resolve) => {
+        const emptyUint8Array = new Uint8Array(0);
+        resolve(emptyUint8Array);
       });
+      // return _ajax({
+      //   call: 'storageModify',
+      //   contentType: 'application/x-protobuf',
+      //   data,
+      //   host: storageUrl,
+      //   httpType: 'PUT',
+      //   // If we run into a conflict, the current manifest is returned -
+      //   //   it will will be an Uint8Array at the response key on the Error
+      //   responseType: 'bytes',
+      //   ...credentials,
+      // });
     }
 
     async function registerSupportForUnauthenticatedDelivery() {
