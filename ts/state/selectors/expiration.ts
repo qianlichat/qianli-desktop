@@ -61,28 +61,29 @@ export const hasExpired = createSelector(
   getAutoDownloadUpdate,
   (_: StateType, { now = Date.now() }: HasExpiredOptionsType = {}) => now,
   (buildExpiration: number, autoDownloadUpdate: boolean, now: number) => {
-    if (getEnvironment() !== Environment.Production && buildExpiration === 0) {
-      return false;
-    }
+    return false;
+    // if (getEnvironment() !== Environment.Production && buildExpiration === 0) {
+    //   return false;
+    // }
 
-    if (isInPast(buildExpiration)) {
-      return true;
-    }
+    // if (isInPast(buildExpiration)) {
+    //   return true;
+    // }
 
-    const safeExpirationMs = autoDownloadUpdate
-      ? NINETY_ONE_DAYS
-      : THIRTY_ONE_DAYS;
+    // const safeExpirationMs = autoDownloadUpdate
+    //   ? NINETY_ONE_DAYS
+    //   : THIRTY_ONE_DAYS;
 
-    const buildExpirationDuration = buildExpiration - now;
-    const tooFarIntoFuture = buildExpirationDuration > safeExpirationMs;
+    // const buildExpirationDuration = buildExpiration - now;
+    // const tooFarIntoFuture = buildExpirationDuration > safeExpirationMs;
 
-    if (tooFarIntoFuture) {
-      log.error(
-        'Build expiration is set too far into the future',
-        buildExpiration
-      );
-    }
+    // if (tooFarIntoFuture) {
+    //   log.error(
+    //     'Build expiration is set too far into the future',
+    //     buildExpiration
+    //   );
+    // }
 
-    return tooFarIntoFuture || isInPast(buildExpiration);
+    // return tooFarIntoFuture || isInPast(buildExpiration);
   }
 );
